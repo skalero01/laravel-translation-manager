@@ -7,6 +7,7 @@
  */
 
 namespace Vsch\TranslationManager\Classes;
+use Illuminate\Support\Str;
 
 class PathTemplateResolver
 {
@@ -355,7 +356,7 @@ class PathTemplateResolver
         $prefix = str_replace("\\", "/", $prefix);
 
         for (; ;) {
-            $isUnderBaseDir = $prefix == $this->normalized_base_path || starts_with($prefix . '/', $this->normalized_base_path . '/');
+            $isUnderBaseDir = $prefix == $this->normalized_base_path || Str::startsWith($prefix . '/', $this->normalized_base_path . '/');
 
             if (array_key_exists($prefix, $this->processed_dirs) || ($isUnderBaseDir && (!file_exists($prefix) || !is_dir($prefix)))) {
                 // already handled this one or it does not exist and not under base dir
