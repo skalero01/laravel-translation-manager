@@ -2,6 +2,7 @@
 
 namespace Vsch\TranslationManager;
 
+use Illuminate\Support\Arr;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,6 +20,7 @@ use Vsch\TranslationManager\Models\Translation;
 use Vsch\TranslationManager\Models\UserLocales;
 use Vsch\TranslationManager\Repositories\Interfaces\ITranslatorRepository;
 use ZipArchive;
+use Illuminate\Support\Str;
 
 /**
  * Class Manager
@@ -390,7 +392,7 @@ class Manager
             $this->augmentedGroupReverseList = [];
 
             foreach ($groupList as $group) {
-                if (starts_with($group, ["vnd:", "wbn:"])) {
+                if (Str::startsWith($group, ["vnd:", "wbn:"])) {
                     // we need this one
                     $parts = explode('.', $group, 2);
                     if (count($parts) === 2) {
@@ -1264,7 +1266,7 @@ class Manager
                 // just update the locale with translations, keys are already LTM keys here
                 $translations = $jsonTranslations[$locale];
             } else {
-                $translations = array_dot(include($langFile));
+                $translations = Arr::dot(include($langFile));
             }
             $this->importTranslationFile($locale, $db_group, $translations, $replace);
         }
@@ -1651,7 +1653,7 @@ class Manager
     {
         $array = array();
         foreach ($translations as $translation) {
-            array_set($array[$translation->locale][$translation->group], $translation->key, $translation->value);
+            Arr::set($array[$translation->locale][$translation->group], $translation->key, $translation->value);
         }
         return $array;
     }
@@ -1665,7 +1667,7 @@ class Manager
             $group = $translation->group;
             $key = $translation->key;
             if (!array_key_exists($key, $nonArrays)) {
-                $value = array_get($tree[$translation->locale][$translation->group], $translation->key);
+                $value = Arr::get($tree[$translation->locale][$translation->group], $translation->key);
 
                 if (is_array($value)) {
                     // this one is an array while it is a translation in the source 
